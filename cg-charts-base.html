@@ -4,11 +4,14 @@
 
 <script src="../Chart.js/Chart.min.js"></script>
 
-<polymer-element name="cg-charts-base" extends="cg-base" attributes="data chartColors header width height defaultparams datarequest animated animationsteps">
+<polymer-element name="cg-charts-base" extends="cg-base" attributes="data chartColors header width height dataBaseParams dataTagPrefix animated animationsteps">
 <template>
   <style>
     :host {
       font-family: sans-serif;
+    }
+    .hidden{
+        display:none;
     }
     #chart{
       margin:30px;
@@ -41,25 +44,23 @@
           width:{{width}}px;
       }
   </style>
-  <div layout vertical center relative>
-    <template if="{{header}}">
-      <div id="header">
-        <span>{{header}}</span>
-      </div>
-    </template>
-      <template if="{{chart.segments.length == 0}}">
-          <div class="nodata" styl>No data for this period</div>
-      </template>
+    <div layout vertical center relative>
+        <template if="{{header}}">
+            <div id="header">
+                <span>{{header}}</span>
+            </div>
+        </template>
+        <template if="{{!withData}}"><div class="nodata">No data for this period</div></template>
         <canvas id="chart" width="{{width}}" height={{height}}"></canvas>
         <div id="legend" layout horizontal wrap>
-          <template repeat="{{(chart.segments || chart.datasets)  as data}}">
-              <div relative class="item" layout horizontal center>
-                <paper-shadow z="2" fit style="background-color:{{data.fillColor}}"></paper-shadow>
-                <div flex class="label">{{data.label}}</div>
-              </div>
-          </template>
+            <template repeat="{{(chart.segments || chart.datasets)  as data}}">
+                <div relative class="item" layout horizontal center>
+                    <paper-shadow z="2" fit style="background-color:{{data.fillColor}}"></paper-shadow>
+                    <div flex class="label">{{data.label}}</div>
+                </div>
+            </template>
         </div>
-  </div>
+    </div>
 </template>
 <script>
 
@@ -69,12 +70,17 @@
       chartColors:null,
       width:400,
       height:400,
+      withData:false,
       data:null,
       chart:null,
       animated:true,
       animationsteps:60,
       ready:function(){
-        this.dataChanged();
+          if(this.isDataAware()) {
+              this.onRefreshData();
+          }else{
+              this.dataChanged();
+          }
       },
       getColorFor:function(index, alpha){
           var color;
@@ -91,23 +97,30 @@
       _rdmColor:function(){
           return parseInt(Math.random() * 256);
       },
-      dataChanged: function () {
-          if (!this.data) {
-              return;
-          }
+      dataChanged:function(){
           this.chart && this.chart.destroy();
-          this.chart = this.createChart(this.$.chart.getContext("2d"), this.data, {
-              animation: this.animated,
-              animationSteps: this.animationsteps
-          });
-
+          if(this.hasData(this.data)){
+              this.withData = true;
+              this.$.chart.classList.remove("hidden");
+              this.chart = this.createChart(this.$.chart.getContext("2d"), this.data, {
+                  animation: this.animated,
+                  animationSteps: this.animationsteps
+              });
+          }else{
+              this.withData = false;
+              this.chart = null;
+              this.$.chart.classList.add("hidden");
+          }
       },
-      defaultparamsChanged:function(){
-        this.fireDataRequest(this.type + "-data-request", null, function(response){
+      onRefreshData:function(){
+        this.fireDataRequest(this.type + "-data-request", function(response){
             this.data = response.data;
         }.bind(this));
       },
       createChart:function(context, data, options){
+        throw "to override";
+      },
+      hasData:function(data){
         throw "to override";
       }
   });

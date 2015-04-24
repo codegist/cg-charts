@@ -1,22 +1,12 @@
 <link href="../polymer/polymer.html" rel="import">
 <link href="../paper-shadow/paper-shadow.html" rel="import">
-<link href="cg-charts-base.html" rel="import">
+<link href="cg-charts-type1.html" rel="import">
 
-<polymer-element name="cg-charts-radar" extends="cg-charts-base" attributes="data header chartColors width height">
+<polymer-element name="cg-charts-radar" extends="cg-charts-type1" attributes="data header chartColors width height">
 <script>
   Polymer({
       type:"radar",
-      createChart:function(context, data, options) {
-          var i = 0;
-          data.datasets.forEach(function(d){
-              d.fillColor = d.fillColor || this.getColorFor(i, 0.2);
-              d.strokeColor=  d.strokeColor || this.getColorFor(i, 1.0);
-              d.pointColor= d.pointColor|| this.getColorFor(i, 1.0);
-              d.pointStrokeColor= d.pointStrokeColor || this.toCssColor({r:255,g:255,b:255}, 1);
-              d.pointHighlightFill= d.pointHighlightFill|| this.toCssColor({r:255,g:255,b:255}, 1);
-              d.pointHighlightStroke =d.pointHighlightFill|| this.getColorFor(i, 1.0);
-              i++;
-          }.bind(this));
+      newChart:function(context, data, options) {
         return new Chart(context).Radar(data, options);
       }
   });

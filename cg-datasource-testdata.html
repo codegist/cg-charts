@@ -1,0 +1,93 @@
+<link href="../polymer/polymer.html" rel="import">
+<link href="../cg-datasource/cg-datasource-base.html" rel="import">
+
+<polymer-element name="cg-datasource-testdata" extends="cg-datasource-base">
+    <script>
+        (function() {
+            console.log("##################################################");
+            console.log("cg-datasource-testdata INIT");
+            console.log("##################################################");
+
+            var data1 = [
+                {
+                    value: 300,
+                    label: "Red"
+                },
+                {
+                    value: 50,
+                    label: "Green"
+                },
+                {
+                    value: 100,
+                    label: "Yellow"
+                },
+                {
+                    value: 100,
+                    label: "Yellow1"
+                },
+                {
+                    value: 100,
+                    label: "Yello2w"
+                },
+                {
+                    value: 100,
+                    label: "Yell3ow"
+                },
+                {
+                    value: 100,
+                    label: "Yel4low"
+                }
+            ];
+            var data2 = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+                    {
+                        label: "My First dataset",
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                    },
+                    {
+                        label: "My Second dataset",
+                        data: [28, 48, 40, 19, 86, 27, 90]
+                    }
+                ]
+            };
+
+            var pie = data1;
+            var doughnut = data1;
+            var bar = data2;
+            var radar = data2;
+            var line = data2;
+            Polymer({
+                getProvidersMap:function(){
+                    return {
+                        'demo-pie-data-request':this.getPie,
+                        'demo-bar-data-request':this.getBar,
+                        'demo-radar-data-request':this.getRadar,
+                        'demo-doughnut-data-request':this.getDoughnut,
+                        'demo-line-data-request':this.getLine
+                    };
+                },
+                getPie:function(callback, params){
+                    console.log("### Datasource[TestData] getPie(params:"+JSON.stringify(params)+")");
+                    return callback({success:true,data:params.nodata ? null :pie});
+                },
+                getBar:function(callback, params){
+                    console.log("### Datasource[TestData] getBar(params:"+JSON.stringify(params)+")");
+                    return callback({success:true,data:params.nodata ? null :bar});
+                },
+                getRadar:function(callback, params){
+                    console.log("### Datasource[TestData] getRadar(params:"+JSON.stringify(params)+")");
+                    return callback({success:true,data:params.nodata ? null :radar});
+                },
+                getDoughnut:function(callback, params){
+                    console.log("### Datasource[TestData] getDoughnut(params:"+JSON.stringify(params)+")");
+                    return callback({success:true,data:params.nodata ? null :doughnut});
+                },
+                getLine:function(callback, params){
+                    console.log("### Datasource[TestData] getLine(params:"+JSON.stringify(params)+")");
+                    return callback({success:true,data:params.nodata ? null : line});
+                }
+            });
+        })();
+    </script>
+</polymer-element>
