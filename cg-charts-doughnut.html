@@ -2,10 +2,17 @@
 <link href="../paper-shadow/paper-shadow.html" rel="import">
 <link href="cg-charts-base.html" rel="import">
 
-<polymer-element name="cg-charts-doughnut" extends="cg-charts-base" attributes="data header width height">
+<polymer-element name="cg-charts-doughnut" extends="cg-charts-base" attributes="data header chartColors width height">
 <script>
   Polymer({
+      type:"doughnut",
       createChart:function(context, data, options) {
+          var i = 0;
+          data.forEach(function(d){
+              d.color = d.color || this.getColorFor(i, 1.0);
+              d.highlight =  d.highlight || this.getColorFor(i, 1.0);
+              i++;
+          }.bind(this));
         return new Chart(context).Doughnut(data, options);
       }
   });
