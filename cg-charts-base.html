@@ -113,9 +113,13 @@
           }
       },
       onRefreshData:function(){
-        this.fireDataRequest(this.type + "-data-request", function(response){
-            this.data = response.data;
-        }.bind(this));
+        this.fireDataRequest({
+            type:this.type + "-data-request",
+            success:function(response){
+                this.data = response.data;
+            }.bind(this),
+            failure:function(response){}.bind(this)
+        });
       },
       createChart:function(context, data, options){
         throw "to override";
