@@ -1,0 +1,14 @@
+<link href="../polymer/polymer.html" rel="import">
+<link href="../paper-shadow/paper-shadow.html" rel="import">
+<link href="cg-charts-type2.html" rel="import">
+
+<polymer-element name="cg-charts-pie" extends="cg-charts-type2" attributes="data header chartColors width height animated">
+<script>
+  Polymer({
+      type:"pie",
+      newChart:function(context, data, options) {
+        return new Chart(context).Pie(data, options);
+      }
+  });
+</script>
+</polymer-element>

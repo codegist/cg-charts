@@ -1,0 +1,133 @@
+<link href="../polymer/polymer.html" rel="import">
+<link href="../paper-shadow/paper-shadow.html" rel="import">
+<link href="../cg-base/cg-base.html" rel="import">
+
+<script src="../Chart.js/Chart.min.js"></script>
+
+<polymer-element name="cg-charts-base" extends="cg-base" attributes="data chartColors header width height dataBaseParams dataTagPrefix animated animationsteps">
+<template>
+  <style>
+    :host {
+      font-family: sans-serif;
+    }
+    .hidden{
+        display:none;
+    }
+    #chart{
+      margin:30px;
+    }
+    #header span {
+      font-size: 1.3em;
+    }
+    #legend paper-shadow {
+      border-radius: 5px;
+    }
+    #legend {
+        max-width:{{width}}px;
+    }
+    #legend .item{
+      margin:5px;
+      padding:5px;
+      min-width:75px;
+    }
+    #legend .item .label{
+      z-index:1;
+      text-align: center;
+      color:white
+    }
+      .nodata {
+          font-size: 40px;
+          word-break: break-all;
+          white-space: normal;
+          color: #8B8B8B;
+          padding: 30px;
+          width:{{width}}px;
+      }
+  </style>
+    <div layout vertical center relative>
+        <template if="{{header}}">
+            <div id="header">
+                <span>{{header}}</span>
+            </div>
+        </template>
+        <template if="{{!withData}}"><div class="nodata">No data for this period</div></template>
+        <canvas id="chart" width="{{width}}" height={{height}}"></canvas>
+        <div id="legend" layout horizontal wrap>
+            <template repeat="{{(chart.segments || chart.datasets)  as data}}">
+                <div relative class="item" layout horizontal center>
+                    <paper-shadow z="2" fit style="background-color:{{data.fillColor}}"></paper-shadow>
+                    <div flex class="label">{{data.label}}</div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
+<script>
+
+  Polymer("cg-charts-base", {
+      type:null,
+      header:null,
+      chartColors:null,
+      width:400,
+      height:400,
+      withData:false,
+      data:null,
+      chart:null,
+      animated:true,
+      animationsteps:60,
+      ready:function(){
+          if(this.isDataAware()) {
+              this.onRefreshData();
+          }else{
+              this.dataChanged();
+          }
+      },
+      getColorFor:function(index, alpha){
+          var color;
+          if(this.chartColors) {
+              color = this.chartColors[index % this.chartColors.length];
+          }else{
+              color = { r:this._rdmColor(),g:this._rdmColor(),  b:this._rdmColor() };
+          }
+          return this.toCssColor(color, alpha);
+      },
+      toCssColor:function(color, alpha){
+          return "rgba("+color.r+","+color.g+","+color.b+","+alpha+")";
+      },
+      _rdmColor:function(){
+          return parseInt(Math.random() * 256);
+      },
+      dataChanged:function(){
+          this.chart && this.chart.destroy();
+          if(this.hasData(this.data)){
+              this.withData = true;
+              this.$.chart.classList.remove("hidden");
+              this.chart = this.createChart(this.$.chart.getContext("2d"), this.data, {
+                  animation: this.animated,
+                  animationSteps: this.animationsteps
+              });
+          }else{
+              this.withData = false;
+              this.chart = null;
+              this.$.chart.classList.add("hidden");
+          }
+      },
+      onRefreshData:function(){
+        this.fireDataRequest({
+            type:this.type + "-data-request",
+            success:function(response){
+                this.data = response.data;
+            }.bind(this),
+            failure:function(response){}.bind(this)
+        });
+      },
+      createChart:function(context, data, options){
+        throw "to override";
+      },
+      hasData:function(data){
+        throw "to override";
+      }
+  });
+
+</script>
+</polymer-element>
