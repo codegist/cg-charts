@@ -52,20 +52,23 @@
         </template>
         <template if="{{!withData}}"><div class="nodata">No data for this period</div></template>
         <canvas id="chart" width="{{width}}" height={{height}}"></canvas>
-        <div id="legend" layout horizontal wrap>
-            <template repeat="{{(chart.segments || chart.datasets)  as data}}">
-                <div relative class="item" layout horizontal center>
-                    <paper-shadow z="2" fit style="background-color:{{data.fillColor}}"></paper-shadow>
-                    <div flex class="label">{{data.label}}</div>
-                </div>
-            </template>
-        </div>
+        <template if="{{(chart.segments || chart.datasets).length > 1}}">
+            <div id="legend" layout horizontal wrap>
+                <template repeat="{{(chart.segments || chart.datasets)  as data}}">
+                    <div relative class="item" layout horizontal center>
+                        <paper-shadow z="2" fit style="background-color:{{data.fillColor}}"></paper-shadow>
+                        <div flex class="label">{{data.label}}</div>
+                    </div>
+                </template>
+            </div>
+        </template>
     </div>
 </template>
 <script>
 
   Polymer("cg-charts-base", {
       type:null,
+      chartType:null,
       header:null,
       chartColors:null,
       width:400,
@@ -85,14 +88,15 @@
       domReady:function(){
           console.log("["+this.constructor.name+"] domReady");
       },
-      getColorFor:function(index, alpha){
+      getColorFor:function(index, alpha, alphaType){
           var color;
-          if(this.chartColors) {
-              color = this.chartColors[index % this.chartColors.length];
+          if(this.chartColors && this.chartColors.colors) {
+              color = this.chartColors.colors[index % this.chartColors.colors.length];
           }else{
               color = { r:this._rdmColor(),g:this._rdmColor(),  b:this._rdmColor() };
           }
-          return this.toCssColor(color, alpha);
+          var alpha = "alphaType" + this.chartType;
+          return this.toCssColor(color, this.chartColors && this.chartColors[alpha] && this.chartColors[alpha][alphaType] ? this.chartColors[alpha][alphaType] : alpha);
       },
       toCssColor:function(color, alpha){
           return "rgba("+color.r+","+color.g+","+color.b+","+alpha+")";

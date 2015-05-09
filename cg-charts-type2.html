@@ -5,14 +5,15 @@
 <polymer-element name="cg-charts-type2" extends="cg-charts-base" attributes="data header chartColors width height">
 <script>
   Polymer({
+      chartType:2,
       hasData:function(data) {
         return data && data.length > 0;
       },
       createChart:function(context, data, options) {
           var i = 0;
           data.forEach(function(d){
-              d.color = d.color || this.getColorFor(i, 1.0);
-              d.highlight =  d.highlight || this.getColorFor(i, 1.0);
+              d.color = d.color || this.getColorFor(i, 1.0, "color");
+              d.highlight =  d.highlight || this.getColorFor(i, 1.0, "highlight");
               i++;
           }.bind(this));
         return this.newChart(context, data, options);

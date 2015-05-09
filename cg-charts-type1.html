@@ -5,6 +5,7 @@
 <polymer-element name="cg-charts-type1" extends="cg-charts-base" attributes="data header chartColors width height">
 <script>
   Polymer({
+      chartType:1,
       hasData:function(data) {
           var maybe = data && data.datasets.length > 0;
           if(!maybe) {
@@ -20,10 +21,10 @@
       createChart:function(context, data, options) {
           var i = 0;
           data.datasets.forEach(function(d){
-              d.fillColor = d.fillColor || this.getColorFor(i, 1.0);
-              d.strokeColor =  d.strokeColor || this.getColorFor(i, 1.0);
-              d.highlightFill =  d.highlightFill || this.getColorFor(i, 1.0);
-              d.highlightStroke =  d.highlightStroke || this.getColorFor(i, 1.0);
+              d.fillColor = d.fillColor || this.getColorFor(i, 0.3, "fill");
+              d.strokeColor =  d.strokeColor || this.getColorFor(i, 0.5, "stroke");
+              d.highlightFill =  d.highlightFill || this.getColorFor(i, 1.0, "highlightFill");
+              d.highlightStroke =  d.highlightStroke || this.getColorFor(i, 1.0, "highlightStroke");
               i++;
           }.bind(this));
           return this.newChart(context, data, options);
