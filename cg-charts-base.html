@@ -82,6 +82,9 @@
               this.dataChanged();
           }
       },
+      domReady:function(){
+          console.log("["+this.constructor.name+"] domReady");
+      },
       getColorFor:function(index, alpha){
           var color;
           if(this.chartColors) {
