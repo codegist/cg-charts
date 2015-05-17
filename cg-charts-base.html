@@ -4,7 +4,7 @@
 
 <script src="../Chart.js/Chart.min.js"></script>
 
-<polymer-element name="cg-charts-base" extends="cg-base" attributes="data chartColors header width height dataBaseParams dataTagPrefix animated animationsteps">
+<polymer-element name="cg-charts-base" extends="cg-base" attributes="data chartColors header width height animated animationsteps">
 <template>
   <style>
     :host {
@@ -80,7 +80,7 @@
       animationsteps:60,
       ready:function(){
           if(this.isDataAware()) {
-              this.onRefreshData();
+              this.contextChanged();
           }else{
               this.dataChanged();
           }
@@ -116,7 +116,7 @@
               this.$.chart.classList.add("hidden");
           }
       },
-      onRefreshData:function(){
+      contextChanged:function(){
         this.fireDataRequest({
             type:this.type + "/data",
             success:function(response){
