@@ -118,7 +118,7 @@
       },
       onRefreshData:function(){
         this.fireDataRequest({
-            type:this.type + "-data-request",
+            type:this.type + "/data",
             success:function(response){
                 this.data = response.data;
             }.bind(this),
