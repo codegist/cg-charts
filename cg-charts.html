@@ -1,0 +1,87 @@
+<link href="../polymer/polymer.html" rel="import">
+<link href="../cg-utils/cg-utils.html" rel="import">
+<script src="../Chart.js/Chart.min.js"></script>
+
+<script>
+    CG.Charts = {
+        hasData:function(type, data){
+            var chartType = CG.Charts.chart.types[type];
+            var chartTypeSpecs = CG.Charts.chart.categories[chartType.type];
+            return chartTypeSpecs.hasData(data);
+        },
+        create:function(type, chartColors, context, data, options){
+            var type = CG.Charts.chart.types[type];
+            var chartTypeSpecs = CG.Charts.chart.categories[type.type];
+            data = CG.Utils.Objects.deepClone(data);
+            chartTypeSpecs.applyColors(type.type, chartColors, data);
+            var chart = new Chart(context)[type.constructor](data, options);
+            chart.cgData = chart[chartTypeSpecs.dataAccessor];
+            return chart;
+        },
+        chart:{
+            types:{
+                bar:{constructor:"Bar", type:"1"},
+                line:{constructor:"Line", type:"1"},
+                radar:{constructor:"Radar", type:"1"},
+                pie:{constructor:"Pie", type:"2"},
+                doughnut:{constructor:"Doughnut", type:"2"},
+            },
+            categories: {
+                1: {
+                    dataAccessor:"datasets",
+                    hasData: function (data) {
+                        var maybe = data && data.datasets.length > 0;
+                        if (!maybe) {
+                            return false;
+                        }
+                        for (var i = 0; i < data.datasets.length; i++) {
+                            if (data.datasets[i].data.length > 0) {
+                                return true
+                            }
+                        }
+                        return false;
+                    },
+                    applyColors: function (category, chartColors, data) {
+                        data.datasets.forEach(function (d, i) {
+                            var color = (chartColors && chartColors.colors) ? chartColors.colors[i % chartColors.colors.length] : CG.Charts.chart.rdmRGB();
+                            d.fillColor = d.fillColor || CG.Charts.chart.getColorFor(category, chartColors, color, 0.3, "fill");
+                            d.strokeColor = d.strokeColor || CG.Charts.chart.getColorFor(category, chartColors, color, 0.5, "stroke");
+                            d.highlightFill = d.highlightFill || CG.Charts.chart.getColorFor(category, chartColors, color, 1.0, "highlightFill");
+                            d.highlightStroke = d.highlightStroke || CG.Charts.chart.getColorFor(category, chartColors, color, 1.0, "highlightStroke");
+                        }.bind(this));
+                        return data;
+                    }
+                },
+                2: {
+                    dataAccessor:"segments",
+                    hasData: function (data) {
+                        return data && data.length > 0;
+                    },
+                    applyColors: function (category, chartColors, data) {
+                        data.forEach(function (d, i) {
+                            var color = (chartColors && chartColors.colors) ? chartColors.colors[i % chartColors.colors.length] : CG.Charts.chart.rdmRGB();
+                            d.color = d.color || CG.Charts.chart.getColorFor(category, chartColors, color, 0.7, "color");
+                            d.highlight = d.highlight || CG.Charts.chart.getColorFor(category, chartColors, color, 1.0, "highlight");
+                        }.bind(this));
+                        return data;
+                    }
+                },
+            },
+            getColorFor: function (category, chartColors, color, alpha, alphaType) {
+                var alphaKey = "alphaType" + category;
+                return CG.Charts.chart.toCssColor(color, chartColors && chartColors[alphaKey] && chartColors[alphaKey][alphaType] ? chartColors[alphaKey][alphaType] : alpha);
+            },
+            toCssColor: function (color, alpha) {
+                return "rgba(" + color.r + "," + color.g + "," + color.b + "," + alpha + ")";
+            },
+            rdmRGB: function () {
+                return {r:CG.Charts.chart.rdmColor(), g:CG.Charts.chart.rdmColor(), b:CG.Charts.chart.rdmColor()};
+            },
+            rdmColor: function () {
+                return parseInt(Math.random() * 256);
+            },
+        },
+
+
+    };
+</script>

@@ -1,0 +1,138 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+<link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../cg-base/cg-base-behavior.html">
+<link rel="import" href="cg-charts.html">
+
+<dom-module id="cg-chart">
+    <style>
+        :host {
+            @apply(--paper-font-body1);
+        }
+
+        .chart-wrapper #chart {
+            margin: 30px;
+        }
+
+        .chart-wrapper #header span {
+            font-size: 1.3em;
+        }
+
+        .chart-wrapper .legend .legend-item {
+            @apply(--paper-font-caption);
+            border-radius: 5px!important;
+            line-height: 14px!important;
+            cursor:pointer;
+            padding: 4px;
+            margin: 5px;
+            display: inline-block;
+            color: white;
+        }
+
+        .chart-wrapper .nodata {
+            @apply(--paper-font-display1);
+            color: #8B8B8B;
+            padding: 30px;
+        }
+    </style>
+    <template>
+
+        <div class="chart-wrapper layout vertical center relative">
+            <div hidden$="[[!isDefined(header)]]" id="header">
+                <span>[[header]]</span>
+            </div>
+            <div hidden$="[[_withData]]" class="nodata" style$="[[style('width', width)]]">No data for this period</div>
+            <canvas hiddden$=[[!_withData]] id="chart" width$="[[cssToNumber(width)]]"
+                    height$=[[cssToNumber(height)]]"></canvas>
+            <div hidden$="[[!isGreaterThan(_chart.cgData.length, 1)]]" class="legend layout horizontal wrap"
+                 style$="[[style('max-width', width)]]">
+                <template is="dom-repeat" items="[[_chart.cgData]]">
+                    <paper-material elevation="2" class="legend-item" style$="[[style('background-color', item.fillColor)]]">[[item.label]]</paper-material>
+                </template>
+            </div>
+        </div>
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: "cg-chart",
+        properties: {
+            type: String,
+            header: {
+                type:String,
+                value:""
+            },
+            chartColors: {
+                type:Object,
+                observer:'dataChanged'
+            },
+            width:{
+                type:String,
+                value:"300px"
+            },
+            height: {
+                type:String,
+                value:"300px"
+            },
+            animated: {
+                type:Boolean,
+                value:true
+            },
+            animationSteps: {
+                type:Number,
+                value:60
+            },
+            cgName: {
+                type: String,
+                value: 'chart'
+            },
+            data: {
+                type: Object,
+                observer: 'dataChanged'
+            },
+            _chart: {
+                type:Object,
+                value:null,
+                notify:true
+            },
+            _withData: {
+                type: Boolean,
+                value: false
+            },
+        },
+        behaviors: [CG.BaseBehavior],
+        ready: function () {
+            if (this.isDataAware()) {
+                this.reload();
+            }
+        },
+        dataChanged: function () {
+            this._chart && this._chart.destroy();
+            if (CG.Charts.hasData(this.type, this.data)) {
+                this._withData = true;
+                this._chart = CG.Charts.create(this.type, this.chartColors, this.$.chart.getContext("2d"), this.data, {
+                    animation: this.animated,
+                    animationSteps: this.animationSteps
+                });
+            } else {
+                this._withData = false;
+                this._chart = null;
+            }
+        },
+        reload: function () {
+            this.fireDataRequest({
+                type: this.type + "/data",
+                success: function (response) {
+                    this.data = response.data;
+                }.bind(this),
+                failure: function (response) {
+                }.bind(this)
+            });
+        },
+        contextChanged: function () {
+            this.reload();
+        },
+    });
+
+</script>

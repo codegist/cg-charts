@@ -1,93 +1,85 @@
 <link href="../polymer/polymer.html" rel="import">
-<link href="../cg-datasource/cg-datasource-base.html" rel="import">
+<link href="../cg-datasource/cg-datasource-base-behavior.html" rel="import">
+<link href="../cg-base/cg-base-behavior.html" rel="import">
+<link href="../cg-utils/cg-utils.html" rel="import">
 
-<polymer-element name="cg-datasource-testdata" extends="cg-datasource-base">
-    <script>
-        (function() {
-            console.log("##################################################");
-            console.log("cg-datasource-testdata INIT");
-            console.log("##################################################");
-
-            var data1 = [
-                {
-                    value: 300,
-                    label: "Red"
-                },
-                {
-                    value: 50,
-                    label: "Green"
-                },
-                {
-                    value: 100,
-                    label: "Yellow"
-                },
-                {
-                    value: 100,
-                    label: "Yellow1"
-                },
-                {
-                    value: 100,
-                    label: "Yello2w"
-                },
-                {
-                    value: 100,
-                    label: "Yell3ow"
-                },
-                {
-                    value: 100,
-                    label: "Yel4low"
-                }
-            ];
-            var data2 = {
-                labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [
-                    {
-                        label: "My First dataset",
-                        data: [65, 59, 80, 81, 56, 55, 40]
-                    },
-                    {
-                        label: "My Second dataset",
-                        data: [28, 48, 40, 19, 86, 27, 90]
-                    }
-                ]
-            };
-
-            var pie = data1;
-            var doughnut = data1;
-            var bar = data2;
-            var radar = data2;
-            var line = data2;
-            Polymer({
-                getProvidersMap:function(){
+<dom-module id="cg-datasource-testdata">
+</dom-module>
+<script>
+    var db = {
+        bar: {
+            "labels": ["January 2015", "February 2015", "March 2015", "April 2015", "May 2015", "June 2015", "July 2015", "August 2015", "September 2015", "October 2015", "November 2015", "December 2015"],
+            "datasets": [{
+                "label": "Total S/.",
+                "data": ["9438.25", "9149.55", "10130.62", "10523.48", "10440.26", "831.71", 0, 0, 0, 0, 0, 0]
+            }, {"label": "Refunded S/.", "data": ["0.00", "0.00", "0.00", "0.00", "0.00", "0.00", 0, 0, 0, 0, 0, 0]}]
+        },
+        pie: [{"value": 527, "label": "Not Paid"}, {"value": 98, "label": "Paid"}, {"value": 35, "label": "Cancelled"}],
+        doughnut: [
+            {"value": 139, "label": "Apicoectomy"}, {"value": 130, "label": "Implants"}, {
+            "value": 129,
+            "label": "Veneers"
+        }, {"value": 126, "label": "Extraction"}, {
+            "value": 123,
+            "label": "Implant-supported prosthesis"
+        }, {"value": 120, "label": "Dentures"}, {"value": 118, "label": "Pulpotomy"}, {
+            "value": 117,
+            "label": "Prosthodontics"
+        }, {"value": 113, "label": "Fiberotomy"}, {"value": 112, "label": "Crowns"}, {
+            "value": 110,
+            "label": "Bridges"
+        }, {"value": 109, "label": "Root canal"}
+        ],
+        radar:{"labels":["0-10","10-20","20-30","30-40","40-50","50-60","60-70","70-80"],"datasets":[{"label":"Group","data":[23,64,56,51,66,45,57,38]}]},
+        line:{
+            "labels": ["January 2015", "February 2015", "March 2015", "April 2015", "May 2015", "June 2015", "July 2015", "August 2015", "September 2015", "October 2015", "November 2015", "December 2015"],
+            "datasets": [{
+                "label": "Total S/.",
+                "data": ["9438.25", "9149.55", "10130.62", "10523.48", "10440.26", "831.71", 0, 0, 0, 0, 0, 0]
+            }, {"label": "Refunded S/.", "data": ["0.00", "0.00", "0.00", "0.00", "0.00", "0.00", 0, 0, 0, 0, 0, 0]}]
+        }
+    };
+    var clone = CG.Utils.Objects.deepClone;
+    Polymer({
+        is: 'cg-datasource-testdata',
+        properties: {
+            providersMap: {
+                type: Function,
+                value: function () {
                     return {
-                        'demo-pie-data-request':this.getPie,
-                        'demo-bar-data-request':this.getBar,
-                        'demo-radar-data-request':this.getRadar,
-                        'demo-doughnut-data-request':this.getDoughnut,
-                        'demo-line-data-request':this.getLine
+                        'chart/pie/data': this.pie,
+                        'chart/bar/data': this.bar,
+                        'chart/doughnut/data': this.doughnut,
+                        'chart/radar/data': this.radar,
+                        'chart/line/data': this.line
                     };
-                },
-                getPie:function(callback, params){
-                    console.log("### Datasource[TestData] getPie(params:"+JSON.stringify(params)+")");
-                    return callback({success:true,data:params.nodata ? null :pie});
-                },
-                getBar:function(callback, params){
-                    console.log("### Datasource[TestData] getBar(params:"+JSON.stringify(params)+")");
-                    return callback({success:true,data:params.nodata ? null :bar});
-                },
-                getRadar:function(callback, params){
-                    console.log("### Datasource[TestData] getRadar(params:"+JSON.stringify(params)+")");
-                    return callback({success:true,data:params.nodata ? null :radar});
-                },
-                getDoughnut:function(callback, params){
-                    console.log("### Datasource[TestData] getDoughnut(params:"+JSON.stringify(params)+")");
-                    return callback({success:true,data:params.nodata ? null :doughnut});
-                },
-                getLine:function(callback, params){
-                    console.log("### Datasource[TestData] getLine(params:"+JSON.stringify(params)+")");
-                    return callback({success:true,data:params.nodata ? null : line});
                 }
-            });
-        })();
-    </script>
-</polymer-element>
+            }
+        },
+        behaviors: [CG.DataSourceBaseBehavior],
+        ready: function () {
+            this.globals.dataAware = true;
+        },
+        pie: function (options) {
+            console.log("### Datasource[TestData] pie(params:" + JSON.stringify(options.params) + ")");
+            return options.success({ success: true, data: clone(db.pie) });
+        },
+        bar: function (options) {
+            console.log("### Datasource[TestData] bar(params:" + JSON.stringify(options.params) + ")");
+            return options.success({ success: true, data: clone(db.bar) });
+        },
+        doughnut: function (options) {
+            console.log("### Datasource[TestData] doughnut(params:" + JSON.stringify(options.params) + ")");
+            return options.success({ success: true, data: clone(db.doughnut) });
+        },
+        radar: function (options) {
+            console.log("### Datasource[TestData] radar(params:" + JSON.stringify(options.params) + ")");
+            return options.success({ success: true, data: clone(db.radar) });
+        },
+        line: function (options) {
+            console.log("### Datasource[TestData] radar(line:" + JSON.stringify(options.params) + ")");
+            return options.success({ success: true, data: clone(db.line)});
+        },
+    });
+</script>
+
