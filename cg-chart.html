@@ -78,9 +78,9 @@
                 type:String,
                 value:"300px"
             },
-            animated: {
+            noAnimated: {
                 type:Boolean,
-                value:true
+                value:false
             },
             animationSteps: {
                 type:Number,
@@ -115,7 +115,7 @@
             if (CG.Charts.hasData(this.type, this.data)) {
                 this._withData = true;
                 this._chart = CG.Charts.create(this.type, this.chartColors, this.$.chart.getContext("2d"), this.data, {
-                    animation: this.animated,
+                    animation: !this.noAnimated,
                     animationSteps: this.animationSteps
                 });
             } else {
