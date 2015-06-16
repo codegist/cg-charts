@@ -2,7 +2,9 @@
 <link rel="import" href="../paper-styles/paper-styles.html">
 <link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../paper-material/paper-material.html">
-<link rel="import" href="../cg-base/cg-base-behavior.html">
+<link rel="import" href="../cg-behaviors/cg-base-behavior.html">
+<link rel="import" href="../cg-behaviors/cg-application-datasource-aware-behavior.html">
+<link rel="import" href="../cg-behaviors/cg-application-context-behavior.html">
 <link rel="import" href="cg-charts.html">
 
 <dom-module id="cg-chart">
@@ -58,9 +60,6 @@
     Polymer({
         is: "cg-chart",
         properties: {
-            listensTo:{
-                value:[]
-            },
             type: String,
             header: {
                 type:String,
@@ -104,9 +103,9 @@
                 value: false
             },
         },
-        behaviors: [CG.BaseBehavior],
+        behaviors: [CG.BaseBehavior, CG.ApplicationDataSourceAwareBehavior, CG.ApplicationContextBehavior],
         ready: function () {
-            if (this.isDataAware()) {
+            if (this.data == null) {
                 this.reload();
             }
         },
@@ -133,7 +132,7 @@
                 }.bind(this)
             });
         },
-        contextChanged: function () {
+        onContextChanged: function () {
             this.reload();
         },
     });

@@ -1,7 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../cg-datasource/cg-datasource-base-behavior.html">
-<link rel="import" href="../cg-base/cg-base-behavior.html">
-<link rel="import" href="../cg-utils/cg-utils.html">
 
 <dom-module id="cg-datasource-testdata">
 </dom-module>
@@ -57,9 +55,6 @@
             }
         },
         behaviors: [CG.DataSourceBaseBehavior],
-        ready: function () {
-            this.globals.dataAware = true;
-        },
         pie: function (options) {
             console.log("### Datasource[TestData] pie(params:" + JSON.stringify(options.params) + ")");
             return options.success({ success: true, data: clone(db.pie) });
