@@ -45,7 +45,7 @@
                 <span>[[header]]</span>
             </div>
             <div hidden$="[[_withData]]" class="nodata" style$="[[style('width', width)]]">No data for this period</div>
-            <canvas hiddden$=[[!_withData]] id="chart" width$="[[cssToNumber(width)]]"
+            <canvas hidden$=[[!_withData]] id="chart" width$="[[cssToNumber(width)]]"
                     height$=[[cssToNumber(height)]]"></canvas>
             <div hidden$="[[!isGreaterThan(_chart.cgData.length, 1)]]" class="legend layout horizontal wrap"
                  style$="[[style('max-width', width)]]">
@@ -133,7 +133,10 @@
             });
         },
         onContextChanged: function () {
-            this.reload();
+            this.reload(); // todo inject conditions to reload on contextChangedPath
+        },
+        onDataContextChanged: function () {
+            this.reload(); // todo inject conditions to reload on contextChangedPath
         },
     });
 
