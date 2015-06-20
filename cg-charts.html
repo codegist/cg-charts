@@ -48,7 +48,7 @@
                             d.strokeColor = d.strokeColor || CG.Charts.chart.getColorFor(category, chartColors, color, 0.5, "stroke");
                             d.highlightFill = d.highlightFill || CG.Charts.chart.getColorFor(category, chartColors, color, 1.0, "highlightFill");
                             d.highlightStroke = d.highlightStroke || CG.Charts.chart.getColorFor(category, chartColors, color, 1.0, "highlightStroke");
-                        }.bind(this));
+                        }, this);
                         return data;
                     }
                 },
@@ -62,7 +62,7 @@
                             var color = (chartColors && chartColors.colors) ? chartColors.colors[i % chartColors.colors.length] : CG.Charts.chart.rdmRGB();
                             d.color = d.color || CG.Charts.chart.getColorFor(category, chartColors, color, 0.7, "color");
                             d.highlight = d.highlight || CG.Charts.chart.getColorFor(category, chartColors, color, 1.0, "highlight");
-                        }.bind(this));
+                        }, this);
                         return data;
                     }
                 },
